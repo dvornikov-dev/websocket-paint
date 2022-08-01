@@ -1,4 +1,6 @@
 import { makeAutoObservable } from "mobx";
+import canvasService from "../services/canvasService";
+
 class CanvasState {
     canvas = null;
     ws = null;
@@ -39,12 +41,7 @@ class CanvasState {
         if(this.undoList.length > 0) {
             const dataUrl = this.undoList.pop();
             this.pushToRedoList(this.canvas.toDataURL());
-            const img = new Image();
-            img.src = dataUrl;
-            img.onload = () => {
-                this.ctx.clearRect(0,0, this.canvas.width, this.canvas.height);
-                this.ctx.drawImage(img, 0, 0, this.canvas.width, this.canvas.height);
-            }
+            canvasService.setImage(dataUrl, this.ctx, this.canvas.width, this.canvas.height);
         }
     }
 
@@ -52,12 +49,7 @@ class CanvasState {
         if(this.redoList.length > 0) {
             const dataUrl = this.redoList.pop();
             this.pushToUndoList(this.canvas.toDataURL());
-            const img = new Image();
-            img.src = dataUrl;
-            img.onload = () => {
-                this.ctx.clearRect(0,0, this.canvas.width, this.canvas.height);
-                this.ctx.drawImage(img, 0, 0, this.canvas.width, this.canvas.height);
-            }
+            canvasService.setImage(dataUrl, this.ctx, this.canvas.width, this.canvas.height);
         }
     }
 }

@@ -64,18 +64,22 @@ class СanvasService {
     getCanvas = (ctx, id, width, height) => {
         axios.get('http://localhost:5000/image?id=' + id).then(response => {
             if(response.data.status) {
-                const img = new Image();
-                img.src = response.data.image;
-                img.onload = () => {
-                    ctx.drawImage(img, 0, 0, width, height);
-                    ctx.stroke();
-                }
+                this.setImage(response.data.image, ctx, width, height);
             }
         });
     }
 
     setCanvas = (id, img) => {
         axios.post('http://localhost:5000/image?id=' + id, { img });
+    }
+
+    setImage = (dataUrl, ctx, width, height) => {
+        const img = new Image();
+        img.src = dataUrl;
+        img.onload = () => {
+            ctx.clearRect(0,0, width, height);
+            ctx.drawImage(img, 0, 0, width, height);
+        }
     }
 }
 
